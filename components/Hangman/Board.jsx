@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { words } from "@/utils/words";
-import Hangman from "@/components/Hangman/HangmanFigure";
 import Link from "next/link";
+import Hangman from "@/components/Hangman/HangmanFigure";
+import Button from "@/components/Button";
 
-export default function Keyboard() {
+export default function Board() {
   const [letters, setLetters] = useState([]);
   const [selectedWord, setSelectedWord] = useState("");
   const [userInput, setUserInput] = useState([]);
@@ -91,21 +92,20 @@ export default function Keyboard() {
         {"<"} Back
       </Link>
 
-      <div className="absolute top-10 right-10">
-        <button
-          className="rounded-xl bg-rose-600 text-white px-4 py-1 hover:bg-rose-700 transition"
-          onClick={resetGame}
-        >
-          Reset
-        </button>
+      <div className="absolute top-10 right-10 flex flex-col items-end space-y-2">
         <div className="text-lg text-slate-700">Mistakes: {wrongTries}</div>
+        <Button
+          passFunc={resetGame}
+          text="Reset"
+          customCSS={"bg-rose-600 hover:bg-rose-700 "}
+        />
       </div>
 
       <div className="flex justify-center mt-4">
         <Hangman wrongTries={wrongTries} />
       </div>
 
-      <div className="flex space-x-2">
+      <div className="flex space-x-2 flex-wrap justify-center">
         {userInput.map((char, index) => (
           <div
             key={index}
@@ -116,10 +116,10 @@ export default function Keyboard() {
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-2 mt-4">
+      <div className="grid grid-cols-6 sm:grid-cols-7 gap-2 mt-4">
         {letters.map((letter) => (
           <button
-            className={`w-20 h-20 flex items-center justify-center text-center text-3xl border rounded-2xl drop-shadow-md ${
+            className={`w-12 sm:w-20 h-12 sm:h-20 flex items-center justify-center text-center text-2xl sm:text-3xl border rounded-2xl drop-shadow-md ${
               incorrectLetter.includes(letter)
                 ? "bg-red-400 text-white cursor-default border-none drop-shadow-xl"
                 : "bg-white hover:bg-gray-200 hover:text-gray-900 transition"

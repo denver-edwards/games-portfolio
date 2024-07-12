@@ -1,11 +1,11 @@
 import Head from "next/head";
-import Board from "@/components/Hangman/Board";
+import Board from "@/components/Wordle/Board";
 
 export default function Hangman() {
   return (
     <>
       <Head>
-        <title>Hangman</title>
+        <title>Wordle</title>
       </Head>
       <Board />
     </>

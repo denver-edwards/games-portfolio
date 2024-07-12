@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Varela } from "next/font/google";
 import Link from "next/link";
 
 export default function Home() {
@@ -18,6 +17,9 @@ export default function Home() {
       >
         Wordle
       </Link>
+      <footer className="absolute bottom-3 text-xs text-gray-600">
+        Made with ❤️
+      </footer>
     </main>
   );
 }
