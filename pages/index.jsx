@@ -17,6 +17,14 @@ export default function Home() {
       >
         Wordle
       </Link>
+
+      <Link
+        href="/blackjack"
+        className="bg-emerald-500 hover:bg-emerald-700 text-white text-sm rounded-xl px-2 py-1"
+      >
+        Blackjack
+      </Link>
+
       <footer className="absolute bottom-3 text-xs text-gray-600">
         Made with ❤️
       </footer>
