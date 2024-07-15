@@ -4,19 +4,15 @@ import arrayShuffle from "@/utils/arrayShuffle";
 
 export default function Table() {
   const [cardDeck, setCardDeck] = useState([]);
+  const [dealerHand, setDealerHand] = useState([]);
   const [playerHand, setPlayerHand] = useState([]);
+  const [playerCount, setPlayerCount] = useState(0);
 
   useEffect(() => {
-    generateDeck();
+    const deck = generateDeck();
+    setCardDeck(deck);
+    dealInitialCards(deck);
   }, []);
-
-  // useEffect(() => {
-  //   console.log(cardDeck);
-  // }, [cardDeck]);
-  //
-  // useEffect(() => {
-  //   console.log(playerHand);
-  // }, [playerHand]);
 
   function generateDeck() {
     const suits = ["H", "D", "C", "S"];
@@ -36,55 +32,92 @@ export default function Table() {
       "A",
     ];
 
-    const newDeck = suits.flatMap((suit) =>
-      ranks.map((rank) => `${suit}${rank}`)
-    );
+    let fullDeck = [];
 
-    const shuffleDeck = arrayShuffle(newDeck);
-    setCardDeck(shuffleDeck);
+    for (let i = 0; i < 6; i++) {
+      let newDeck = suits.flatMap((suit) =>
+        ranks.map((rank) => `${suit}${rank}`)
+      );
 
-    dealInitialCards(shuffleDeck);
+      fullDeck = fullDeck.concat(arrayShuffle(newDeck));
+    }
+
+    return fullDeck;
   }
 
   function dealInitialCards(deck) {
-    // if (deck.length < 052) return;
-
-    const firstCard = deck[0];
-    const secondCard = deck[1];
-
-    setPlayerHand([firstCard, secondCard]);
+    const initialHand = deck.slice(0, 2);
+    setPlayerHand(initialHand);
     setCardDeck(deck.slice(2));
+    updatePlayerCount(initialHand);
   }
 
-  function dealCards() {
-    if (cardDeck.length < 1) return;
+  function dealCard() {
+    if (cardDeck.length < 60) {
+      const deck = generateDeck();
+      setCardDeck(deck);
+    }
 
     const nextCard = cardDeck[0];
-
-    setPlayerHand((prevHand) => [...prevHand, nextCard]);
-    setCardDeck((prevDeck) => prevDeck.slice(1));
+    const newHand = [...playerHand, nextCard];
+    setPlayerHand(newHand);
+    setCardDeck(cardDeck.slice(1));
+    updatePlayerCount(newHand);
   }
 
   function reset() {
     setCardDeck([]);
     setPlayerHand([]);
-    generateDeck();
+    setPlayerCount(0);
+    setDealerHand([]);
+    const newDeck = generateDeck();
+    setCardDeck(newDeck);
+    dealInitialCards(newDeck);
   }
 
+  function nextHand() {
+    setPlayerHand([]);
+    setDealerHand([]);
+    dealInitialCards(cardDeck);
+  }
+
+  function updatePlayerCount(hand) {
+    let newCount = 0;
+    for (let i = 0; i < hand.length; i++) {
+      let cardValue = hand[i].slice(1);
+      if (cardValue === "K" || cardValue === "Q" || cardValue === "J") {
+        cardValue = 10;
+      } else if (cardValue === "A") {
+        cardValue = 11; // or 1, depending on your game logic
+      }
+      newCount += Number(cardValue);
+    }
+    setPlayerCount(newCount);
+  }
+  // first dealers card is shown, 2nd isnt
+  // all players cards are face up
   return (
     <>
       <button
         onClick={reset}
-        className="bg-red-400 hover:bg-red-600 py-2 px-4 text-white rounded-3xl"
+        className="bg-red-400 hover:bg-red-600 py-2 px-4 text-white rounded-3xl absolute top-10 right-10 z-50 outline-none"
       >
         Reset
       </button>
+
       <div className="flex">
         {playerHand.map((card, index) => (
           <Card key={index} number={card} />
         ))}
       </div>
-      s <button onClick={dealCards}>Deal More Cards</button>
+
+      <div>Score:{playerCount}</div>
+      <button
+        onClick={dealCard}
+        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 rounded-3xl bg-green-600 hover:bg-green-800 text-white px-20 py-1 drop-shadow-xl"
+      >
+        Hit
+      </button>
     </>
   );
 }

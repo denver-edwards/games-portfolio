@@ -21,24 +21,45 @@ export default function Card({ number }) {
     }
   }, [cardType]);
 
+  const defaultPosition = { x: 0, y: 0 };
+  const verticalLimit = 30;
+  const [position, setPosition] = useState(defaultPosition);
+
+  const handleDrag = (e, data) => {
+    let newY = data.y;
+
+    if (data.y < defaultPosition.y - verticalLimit) {
+      newY = defaultPosition.y - verticalLimit;
+    }
+
+    if (data.y > defaultPosition.y + verticalLimit) {
+      newY = defaultPosition.y + verticalLimit;
+    }
+
+    setPosition({ x: defaultPosition.x, y: newY });
+  };
+
+  const handleStop = () => {
+    setPosition({ x: defaultPosition.x, y: position.y });
+  };
+
   return (
     <Draggable
-      defaultPosition={{ x: 0, y: 0 }}
-      position={null}
-      grid={[25, 25]}
-      scale={1}
       nodeRef={cardRef}
+      position={position}
+      onDrag={handleDrag}
+      onStop={handleStop}
     >
       <div
         ref={cardRef}
         className="font-slab relative w-40 h-[15em] bg-slate-100 border border-slate-100 rounded-lg shadow-xl flex-shrink-0 mr-4"
         style={{ minWidth: "160px" }}
       >
-        <p className="absolute top-2 right-2">{cardNum}</p>
+        <p className="absolute top-2 left-2">{cardNum}</p>
         <p className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-50">
           {typeIcon}
         </p>
-        <p className="absolute bottom-2 left-2 rotate-180">{cardNum}</p>
+        <p className="absolute bottom-2 right-2 rotate-180">{cardNum}</p>
       </div>
     </Draggable>
   );
