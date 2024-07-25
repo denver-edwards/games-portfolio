@@ -88,12 +88,13 @@ export default function Table() {
       if (cardValue === "K" || cardValue === "Q" || cardValue === "J") {
         cardValue = 10;
       } else if (cardValue === "A") {
-        cardValue = 11; // or 1, depending on your game logic
+        cardValue = 11; // or 1
       }
       newCount += Number(cardValue);
     }
     setPlayerCount(newCount);
   }
+
   // first dealers card is shown, 2nd isnt
   // all players cards are face up
   return (
