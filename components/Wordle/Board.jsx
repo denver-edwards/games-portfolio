@@ -20,7 +20,8 @@ export default function Wordle() {
   }, []);
 
   useEffect(() => {
-    if (wrongTries === 6) {
+    if (wrongTries === 5) {
+      setCurrentGuess(selectedWord.toUpperCase());
       toast.error(
         `Too many tries. You lose! The word was: ${selectedWord.toUpperCase()}`,
         {
@@ -44,7 +45,7 @@ export default function Wordle() {
   }
 
   function checkGuess() {
-    if (currentGuess.length === selectedWord.length) {
+    if (currentGuess.length === selectedWord.length && !gameOver) {
       const newUserInput = [...userInput];
       newUserInput[currentRow] = currentGuess;
       setUserInput(newUserInput);
@@ -104,17 +105,17 @@ export default function Wordle() {
               <div
                 key={colIndex}
                 className={`w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-center text-2xl sm:text-3xl rounded-md ${
-                  guess[colIndex]
+                  guess && guess[colIndex]
                     ? guess[colIndex].toUpperCase() ===
                       selectedWord[colIndex].toUpperCase()
-                      ? "bg-green-500 text-white"
+                      ? "bg-green-400 text-white"
                       : selectedWord.toUpperCase().includes(guess[colIndex])
                       ? "bg-yellow-500 text-white"
-                      : "bg-gray-300 text-black"
+                      : "bg-gray-200 text-black"
                     : "bg-white shadow"
                 }`}
               >
-                {guess[colIndex] || ""}
+                {guess && guess[colIndex] ? guess[colIndex] : ""}
               </div>
             ))}
         </div>
@@ -138,7 +139,14 @@ export default function Wordle() {
           .map((_, colIndex) => (
             <div
               key={colIndex}
-              className={`w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-center text-2xl sm:text-3xl rounded-md bg-white shadow`}
+              className={`w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-center text-2xl sm:text-3xl rounded-md ${
+                gameOver && wrongTries === 5
+                  ? selectedWord[colIndex].toUpperCase() ===
+                    currentGuess[colIndex]
+                    ? "bg-green-500 text-white"
+                    : "bg-gray-300 text-black"
+                  : "bg-white shadow"
+              } ${gameOver ? "opacity-50" : ""}`}
             >
               {currentGuess[colIndex] || ""}
             </div>
@@ -146,8 +154,11 @@ export default function Wordle() {
       </div>
 
       <button
-        className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+        className={`bg-blue-500 text-white px-4 py-2 rounded-lg ${
+          gameOver ? "opacity-50 cursor-not-allowed" : ""
+        }`}
         onClick={checkGuess}
+        disabled={gameOver}
       >
         Guess
       </button>
@@ -159,10 +170,10 @@ export default function Wordle() {
               incorrectLetter.includes(letter)
                 ? "bg-red-400 text-white cursor-default border-none drop-shadow-xl"
                 : "bg-white hover:bg-gray-200 hover:text-gray-900 drop-shadow-xl transition"
-            }`}
+            } ${gameOver ? "opacity-50 cursor-not-allowed" : ""}`}
             key={letter}
             onClick={() => handleKeyPress({ key: letter })}
-            disabled={wrongTries === 6 || gameOver}
+            disabled={gameOver}
           >
             {letter}
           </button>
