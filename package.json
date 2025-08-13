@@ -11,7 +11,7 @@
     "deploy": "vercel --prod"
   },
   "dependencies": {
-    "next": "14.2.4",
+    "next": "^14.2.30",
     "react": "^18",
     "react-dom": "^18",
     "react-draggable": "^4.4.6",
